@@ -4,10 +4,6 @@ results/
 log.csv
 alert_log.csv
 processed_comments.csv
-mtb.py
-textwm.py
-unlabelledmtb.py
-text_preprocessor.py
 data/twitter100_data.csv
 data/twitter10k_data.csv
 data/twitter_data.csv
