@@ -51,6 +51,10 @@ This project analyzes social media comments from CSV files to detect possible cy
 - Visualization for quick insight.
 - Modular preprocessing for text cleaning.
 
----
 
 Feel free to contribute or suggest improvements!
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).<br>
+Copyright © 2025 Kona Shiny Phoenix.
