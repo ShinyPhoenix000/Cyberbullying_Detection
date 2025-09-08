@@ -1,9 +1,44 @@
+# Python virtual environment
 .venv/
-__pycache__/
-results/
+venv/
+env/
+
+# Model checkpoints and weights
+models/**/*.pt
+models/**/*.bin
+models/**/*.safetensors
+models/**/checkpoint-*/
+
+# Processed data and logs
+processed_comments.csv
 log.csv
 alert_log.csv
-processed_comments.csv
-data/twitter100_data.csv
-data/twitter10k_data.csv
-data/twitter_data.csv
+*.log
+
+# Data files
+data/twitter*.csv
+data/processed/
+results/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.*
