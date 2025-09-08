@@ -1,4 +1,3 @@
-nltk.download('punkt_tab')
 import pandas as pd
 from text_preprocessor import preprocess_text
 from textblob import TextBlob
@@ -9,41 +8,48 @@ from sklearn.metrics import accuracy_score
 import argparse
 import os
 
-
 nltk.download('punkt_tab')
 
-# Function to log alert messages to a separate CSV file
 def log_alert_message(message):
+    """Log alert messages to alert_log.csv with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    # Check if the alert CSV file exists; if not, create it and write headers
     try:
-        with open('alert_log.csv', 'x', newline='') as file:  # 'x' mode creates the file if it doesn't exist
+        with open('alert_log.csv', 'x', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['timestamp', 'message'])  # Write headers
+            writer.writerow(['timestamp', 'message'])
     except FileExistsError:
-        pass  # If the file exists, no need to write headers again
+        pass
 
     with open('alert_log.csv', 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([timestamp, message])
 
-# Function to log messages to a general CSV file (existing function)
 def log_message_csv(message):
+    """Log general messages to log.csv with timestamp."""
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    # Check if the CSV file exists; if not, create it and write headers
     try:
-        with open('log.csv', 'x', newline='') as file:  # 'x' mode creates the file if it doesn't exist
+        with open('log.csv', 'x', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['timestamp', 'message'])  # Write headers
+            writer.writerow(['timestamp', 'message'])
     except FileExistsError:
-        pass  # If the file exists, no need to write headers again
+        pass
 
     with open('log.csv', 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([timestamp, message])
 
+def get_polarity(text):
+    """Calculate sentiment polarity using TextBlob."""
+    analysis = TextBlob(text)
+    return analysis.sentiment.polarity
+
+def classify_sentiment(polarity):
+    """Classify polarity into sentiment categories (-1, 0, 1)."""
+    if polarity < 0:
+        return -1
+    elif polarity == 0:
+        return 0
+    return 1
 
 def main():
     parser = argparse.ArgumentParser(description="Cyber Bullying Detection")
@@ -52,49 +58,19 @@ def main():
     parser.add_argument('--config', type=str, default="config.json", help="Path to config file")
     args = parser.parse_args()
 
-    # Ensure output directory exists
     os.makedirs(args.output, exist_ok=True)
-
-    # Load the dataset
     df = pd.read_csv(args.input)
-
-    # Preprocess the comments
     df['cleaned_comment'] = df['comment'].apply(preprocess_text)
-
-    # Check for NaN values in 'label' and drop rows with NaN values
     df = df.dropna(subset=['label'])
-
-    # Function to calculate polarity of the comment
-    def get_polarity(text):
-        analysis = TextBlob(text)
-        return analysis.sentiment.polarity
-
-    # Apply polarity calculation
+    
     df['polarity'] = df['cleaned_comment'].apply(get_polarity)
-
-    # Function to classify polarity into sentiment categories
-    def classify_sentiment(polarity):
-        if polarity < 0:
-            return -1  # Negative sentiment
-        elif polarity == 0:
-            return 0  # Neutral sentiment
-        else:
-            return 1  # Positive sentiment
-
-    # Get predicted sentiments based on polarity
     df['predicted_sentiment'] = df['polarity'].apply(classify_sentiment)
 
-    # Compare predicted sentiments with the true labels (from the 'label' column)
     true_labels = df['label'].values
     predicted_labels = df['predicted_sentiment'].values
-
-    # Calculate accuracy
     accuracy = accuracy_score(true_labels, predicted_labels)
-
-    # Print out the accuracy result
     print(f"TextBlob Accuracy: {accuracy:.2f}")
 
-    # Count negative and neutral comments
     negative_count = df['predicted_sentiment'].apply(lambda x: x == -1).sum()
     neutral_count = df['predicted_sentiment'].apply(lambda x: x == 0).sum()
     positive_count = df['predicted_sentiment'].apply(lambda x: x == 1).sum()

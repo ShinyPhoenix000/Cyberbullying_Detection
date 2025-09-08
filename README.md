@@ -1,60 +1,68 @@
-# Cyber Bullying Detection
+# Cyberbullying Detection System
 
-## Overview
-This project analyzes social media comments from CSV files to detect possible cyberbullying. It uses text preprocessing and sentiment analysis to classify comments as negative, neutral, or positive, and flags cases with a high proportion of negative comments.
-
-## Main Workflow
-1. **Data Input**: Loads comment data from CSV files (e.g., `twitter_data.csv`, `twitter100_data.csv`, `ytcomments100list.csv`).
-2. **Preprocessing**: Cleans comments (lowercasing, removing punctuation & stopwords) via NLTK in `text_preprocessor.py`.
-3. **Detection**: Uses TextBlob for sentiment polarity → classifies as negative, neutral, positive → compares proportion of negative comments to a threshold (15% or 40%).
-4. **Outputs**: Prints summary stats, logs to `log.csv` and `alert_log.csv`, and saves processed data in `processed_comments.csv`.
+A production-ready system for detecting and monitoring cyberbullying in text data using DistilBERT and Streamlit.
 
 ## Features
-- **Alert Logging**: Logs alerts to `alert_log.csv` and general logs to `log.csv`.
-- **Visualization**: Uses Matplotlib & Seaborn (`textwm.py`, `unlabelledmtb.py`).
-- **Email Notifications**: Sends alerts when cyberbullying is detected (`textwm.py`).
-- **Accuracy Calculation**: Compares predicted sentiment to true labels (`mtb.py`).
 
-## Suggested Improvements
-- Secure email credentials.
-- Configurable thresholds (via config file or CLI).
-- Better modularization (functions/classes).
-- Add unit tests.
-- Support more platforms/data formats.
-- Upgrade to ML-based models.
+- Real-time cyberbullying detection using fine-tuned DistilBERT
+- Interactive Streamlit dashboard with visualizations
+- Email alerts for severe content detection
+- CSV data import and preprocessing
+- Model performance metrics and analysis
+- Configurable alert thresholds
 
-## How to Run
-1. Install dependencies:
+## Installation
+
+1. Create a virtual environment:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# or
+.venv\Scripts\activate  # Windows
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+```
+
+## Model Training
+
+1. Prepare your training data in CSV format with columns:
+   - `comment_text`: The text content
+   - `label`: 0 (neutral), 1 (mild), or 2 (severe)
+
+2. Run the training script:
+```bash
+python scripts/train_test_example.py \
+    --data_path data/training_data.csv \
+    --model_dir models/cyberbullying_model \
+    --epochs 3 \
+    --batch_size 16
+```
+
+## Running the Dashboard
+
+1. Start the Streamlit dashboard:
+```bash
+streamlit run dashboard.py
+```
+
+2. Upload your CSV file with comments to analyze
+
+3. Configure email alerts in the sidebar (optional)
+4. Start the API:
    ```bash
-   pip install -r requirements.txt
+   uvicorn app:app --reload
    ```
-2. Download NLTK resources (done automatically, but you can run manually):
-   ```python
-   import nltk
-   nltk.download('stopwords')
-   nltk.download('punkt')
-   ```
-3. Place your CSV data file (e.g., `twitter_data.csv`) in the project folder.
-4. Run the main script:
+5. Launch the dashboard:
    ```bash
-   python mtb.py
-   # or
-   python textwm.py
+   streamlit run dashboard.py
    ```
-5. Check the console output for summary and alerts.
-6. View logs in `log.csv` and `alert_log.csv`.
-7. If using `textwm.py`, check your email for notifications and view the sentiment plot.
-
-## Advanced/Unique Aspects
-- Uses rule-based (TextBlob) and threshold-based detection.
-- Automated alerting via email.
-- Visualization for quick insight.
-- Modular preprocessing for text cleaning.
-
-
-Feel free to contribute or suggest improvements!
 
 ## License
+MIT License © 2025 Kona Shiny Phoenix
 
 This project is licensed under the [MIT License](./LICENSE).<br>
 Copyright © 2025 Kona Shiny Phoenix.
